@@ -16,6 +16,7 @@ Print tracks of a video/audio file, and retrieves info on those tracks.
 * Show IMDB info on a movie or tv-show
 * Show full episode maps of a tv show
 * Print sha-sum hashes for file
+* Color Coding
 
 # Coming Soon:
 * Retrieving box office information
