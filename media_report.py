@@ -352,34 +352,45 @@ def episode_map(id):
     ia = imdb.IMDb()
     
     media = ia.get_movie(id)
-    
     kind = media['kind']
+    media_title = media['title']
+    print_info('Title: {}'.format(media_title))
 
-    if kind == 'tv series':
-        print_header('Episode Map')
-        title = media['title']
-        print_info('Title: {}'.format(title))
-        s = check_for_key('seasons', media)
-        if s:
-            print_tv('Season Count: {}'.format(media['seasons']))
-        
+    if kind == 'tv series' or kind == 'tv mini series':
+        episode_count = 0
+        season_count = 0
         ia.update(media, 'episodes')
-        e = check_for_key('episodes', media)
-        if e:
-            episode_count = 0
-            episodes = media['episodes']
-            for e in episodes:
-                episode_count = episode_count + len(episodes[e])
-            print_tv('Epsiode Count: ', episode_count)
-            for z in episodes:
-                all_items = episodes[z].items()
-                print_header('Season {}: '.format(z))
-                for a in all_items:
-                    print('-- Episode #{}: '.format(a[0]), a[1])
-        else:
-            print_error('The TV Show you specified has not listed episodes')
+
+        all_episodes = media['episodes']
+        for e in all_episodes:
+            episode_count = episode_count + len(all_episodes[e])
+        
+        print_tv('Episode Count: ', episode_count)
+        season_keys = sorted(all_episodes.keys())
+
+        for x in season_keys:
+            print_header('Season {}'.format(x))
+            for z in all_episodes[x].items():
+                obj = z[1]
+                episode_number = obj['episode']
+                episode_title = obj['title']
+
+                try:
+                    rating = obj['rating']
+                except KeyError:
+                    rating = None
+
+                try:
+                    year = obj['year']
+                except KeyError:
+                    year = None
+
+                try:
+                    print('- Episode {en}: {t} - ({y}) - [{r}/10]'.format(en=episode_number, t=episode_title, y=year, r=round(rating)))
+                except TypeError:
+                    print('- Episode {en}: {t} - ({y})'.format(en=episode_number, t=episode_title, y=year))
     else:
-        print_error('Episode map only works for tv series')
+        print_error('Episode map is only supported on TV Shows')
 
 def search():
     ia = imdb.IMDb()
